@@ -1,8 +1,8 @@
 # Geometry Transformation with OpenGL
-Performs and simulates 2 and 3 dimensional transformation with OpenGL on Python.
+Performs and simulates 2 dimensional transformation with OpenGL on Python.
 
 ## Getting Started
-On terminal type in the following command:
+In terminal type in the following command:
 ```
 python geometry-transform.py
 ```
