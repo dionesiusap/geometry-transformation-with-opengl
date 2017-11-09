@@ -4,7 +4,7 @@ Menampilkan sumulasi transformasi linear 2 dimensi dengan API OpenGL dengan baha
 ## Memulai
 Pada terminal ketik perintah berikut:
 ```
-python geometry-transform.py
+python main.py
 ```
 Lalu program akan menampilkan:
 ```

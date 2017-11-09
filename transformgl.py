@@ -1,9 +1,7 @@
-
-
-import string
-__version__ = string.split('$Revision: 1.1.1.1 $')[1]
-__date__ = string.join(string.split('$Date: 2007/02/15 19:25:20 $')[1:3], ' ')
-__author__ = 'Tarn Weisner Burton <twburton@users.sourceforge.net>'
+# Filename    : transformgl.py
+# Author      : Jason Wiguna, Dionesius Agung
+# Version     : 2017/11/04
+# Description : Library for geometry transformation and OpenGL functions
 
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -173,57 +171,14 @@ def keyPressed(*args):
     if args[0] == ESCAPE:
         sys.exit()
 
-def translate(dx, dy):
+def updatePrevMatrix():
     i = 0
     while i < size:
         prevmatrix[i][0] = matrix[i][0]
         prevmatrix[i][1] = matrix[i][1]
         i = i+1
-    i = 0
-    while i < size:
-        tempmatrix[i][0] = matrix[i][0] + dx
-        tempmatrix[i][1] = matrix[i][1] + dy
-        i = i+1
-    j = 0
-    dxfrac = (tempmatrix[i-1][0] - matrix[i-1][0])/100
-    dyfrac = (tempmatrix[i-1][1] - matrix[i-1][1])/100
-    if dx == 0:
-        while j < abs(dy):
-            time.sleep(0.01)
-            i = 0
-            while i < size:
-                matrix[i][0] = matrix[i][0] + dxfrac
-                matrix[i][1] = matrix[i][1] + dyfrac
-                i = i+1
-            j = j+abs(dyfrac)
-    else:
-        while j < 100:
-            time.sleep(0.01)
-            i = 0
-            while i < size:
-                matrix[i][0] = matrix[i][0] + dxfrac
-                matrix[i][1] = matrix[i][1] + dyfrac
-                i = i+1
-            j = j+1
 
-def translate1(dx, dy):
-    i = 0
-    while i < size:
-        matrix[i][0] = matrix[i][0] + dx
-        matrix[i][1] = matrix[i][1] + dy
-        i = i+1
-
-def dilate(k):
-    i = 0
-    while i < size:
-        prevmatrix[i][0] = matrix[i][0]
-        prevmatrix[i][1] = matrix[i][1]
-        i = i+1
-    i = 0
-    while i < size:
-        tempmatrix[i][0] = matrix[i][0] * k
-        tempmatrix[i][1] = matrix[i][1] * k
-        i = i+1
+def animate():
     j = 0
     dx = []
     dy = []
@@ -246,6 +201,30 @@ def dilate(k):
         i = 0
         j = j+1
 
+def translate(dx, dy):
+    updatePrevMatrix()
+    i = 0
+    while i < size:
+        tempmatrix[i][0] = matrix[i][0] + dx
+        tempmatrix[i][1] = matrix[i][1] + dy
+        i = i+1
+    animate()
+
+def translate1(dx, dy):
+    i = 0
+    while i < size:
+        matrix[i][0] = matrix[i][0] + dx
+        matrix[i][1] = matrix[i][1] + dy
+        i = i+1
+
+def dilate(k):
+    updatePrevMatrix()
+    i = 0
+    while i < size:
+        tempmatrix[i][0] = matrix[i][0] * k
+        tempmatrix[i][1] = matrix[i][1] * k
+        i = i+1
+    animate()
 
 def rotate1(deg, p1, p2):
     translate1(-p1, -p2)
@@ -259,11 +238,7 @@ def rotate1(deg, p1, p2):
     translate1(p1, p2)
 
 def rotate(deg, p1, p2):
-    i = 0
-    while i < size:
-        prevmatrix[i][0] = matrix[i][0]
-        prevmatrix[i][1] = matrix[i][1]
-        i = i+1
+    updatePrevMatrix()
     degfrac = deg/100
     j = 0
     while j < 100:
@@ -281,50 +256,17 @@ def reflect1(v1, v2):
     translate1(v1, v2)
 
 def reflect(v1, v2):
-    i = 0
-    while i < size:
-        prevmatrix[i][0] = matrix[i][0]
-        prevmatrix[i][1] = matrix[i][1]
-        i = i+1
+    updatePrevMatrix()
     i = 0
     while i < size:
         tempmatrix[i][0] = matrix[i][0]
         tempmatrix[i][1] = matrix[i][1]
         i = i+1
     reflect1(v1, v2)
-    j = 0
-    dx = []
-    dy = []
-    dxfrac = []
-    dyfrac = []
-    i = 0
-    while i < size:
-        dx.append(matrix[i][0] - tempmatrix[i][0])
-        dy.append(matrix[i][1] - tempmatrix[i][1])
-        dxfrac.append((dx[i])/100)
-        dyfrac.append((dy[i])/100)
-        i = i+1
-    i = 0
-    while i < size:
-        matrix[i][0] = tempmatrix[i][0]
-        matrix[i][1] = tempmatrix[i][1]
-        i = i+1
-    i = 0
-    while j < 100:
-        time.sleep(0.01)
-        while i < size:
-            matrix[i][0] = matrix[i][0] + dxfrac[i]
-            matrix[i][1] = matrix[i][1] + dyfrac[i]
-            i = i+1
-        i = 0
-        j = j+1
+    animate()
 
 def shear(param, degree):
-    i = 0
-    while i < size:
-        prevmatrix[i][0] = matrix[i][0]
-        prevmatrix[i][1] = matrix[i][1]
-        i = i+1
+    updatePrevMatrix()
     i = 0
     while i < size:
         if param == "x":
@@ -334,33 +276,10 @@ def shear(param, degree):
             tempmatrix[i][0] = matrix[i][0]
             tempmatrix[i][1] = matrix[i][1] + matrix[i][0] * degree
         i = i+1
-    j = 0
-    dx = []
-    dy = []
-    dxfrac = []
-    dyfrac = []
-    i = 0
-    while i < size:
-        dx.append(tempmatrix[i][0] - matrix[i][0])
-        dy.append(tempmatrix[i][1] - matrix[i][1])
-        dxfrac.append(dx[i]/100)
-        dyfrac.append(dy[i]/100)
-        i = i+1
-    while j < 100:
-        time.sleep(0.01)
-        i = 0
-        while i < size:
-            matrix[i][0] = matrix[i][0] + dxfrac[i]
-            matrix[i][1] = matrix[i][1] + dyfrac[i]
-            i = i+1
-        j = j+1
+    animate()
 
 def stretch(param, degree):
-    i = 0
-    while i < size:
-        prevmatrix[i][0] = matrix[i][0]
-        prevmatrix[i][1] = matrix[i][1]
-        i = i+1
+    updatePrevMatrix()
     i = 0
     while i < size:
         if param == "x":
@@ -370,60 +289,17 @@ def stretch(param, degree):
             tempmatrix[i][0] = matrix[i][0]
             tempmatrix[i][1] = matrix[i][1] * degree
         i = i+1
-    j = 0
-    dx = []
-    dy = []
-    dxfrac = []
-    dyfrac = []
-    i = 0
-    while i < size:
-        dx.append(tempmatrix[i][0] - matrix[i][0])
-        dy.append(tempmatrix[i][1] - matrix[i][1])
-        dxfrac.append(dx[i]/100)
-        dyfrac.append(dy[i]/100)
-        i = i+1
-    while j < 100:
-        time.sleep(0.01)
-        i = 0
-        while i < size:
-            matrix[i][0] = matrix[i][0] + dxfrac[i]
-            matrix[i][1] = matrix[i][1] + dyfrac[i]
-            i = i+1
-        j = j+1
+    animate()
 
 
 def custom(a, b, c, d):
-    i = 0
-    while i < size:
-        prevmatrix[i][0] = matrix[i][0]
-        prevmatrix[i][1] = matrix[i][1]
-        i = i+1
+    updatePrevMatrix()
     i = 0
     while i < size:
         tempmatrix[i][0] = a * matrix[i][0] + b * matrix[i][1]
         tempmatrix[i][1] = c * matrix[i][0] + d * matrix[i][1]
         i = i+1
-    j = 0
-    dx = []
-    dy = []
-    dxfrac = []
-    dyfrac = []
-    i = 0
-    while i < size:
-        dx.append(tempmatrix[i][0] - matrix[i][0])
-        dy.append(tempmatrix[i][1] - matrix[i][1])
-        dxfrac.append(dx[i]/100)
-        dyfrac.append(dy[i]/100)
-        i = i+1
-    i = 0
-    while j < 100:
-        time.sleep(0.01)
-        while i < size:
-            matrix[i][0] = matrix[i][0] + dxfrac[i]
-            matrix[i][1] = matrix[i][1] + dyfrac[i]
-            i = i+1
-        i = 0
-        j = j+1
+    animate()
 
 def reset():
     i = 0
@@ -475,19 +351,15 @@ def take():
     P = []
     matrix = []
     initmatrix = []
-    tempmatrix = []
     prevmatrix = []
-    size = int (input("Masukan size polygon: "))
+    tempmatrix = []
+    size = int (input("Masukkan size polygon: "))
     i = 1
     while i <= size :
         rawpoint = raw_input("Masukkan titik (format: x,y): ")
         point = rawpoint.split(",")
         ordinat = point[0]
-        absis = point[1]
-        # print "Masukan x",i, ": "
-        # ordinat = input()
-        # print "Masukan y",i, ": "
-        # absis = input()
+        absis = point[1] # Maaf ini tertukar jadinya ordinat=x dan absis=y
         del P[:]
         P.append(float(ordinat))
         P.append(float(absis))
@@ -496,53 +368,3 @@ def take():
         initmatrix.append(list(P))
         tempmatrix.append(list(P))
         prevmatrix.append(list(P))
-
-def gl():
-    Thread(target=main).start()
-    glutInit(sys.argv)
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH)
-    glutInitWindowSize(500, 500)
-    glutInitWindowPosition(0, 0)
-    window = glutCreateWindow("Gambar Segitiga")
-    glutDisplayFunc(DrawGLScene)
-    glutIdleFunc(DrawGLScene)
-    glutReshapeFunc(ReSizeGLScene)
-    glutKeyboardFunc(keyPressed)
-    InitGL(500, 500)
-    glutMainLoop()
-
-def main():
-    masukan = raw_input("Masukan perintah: ")
-    perintah = masukan.split(" ")
-    while perintah[0] != "exit":
-        if ((perintah[0] == "translate") and (len(perintah) == 3)):
-            translate(float(perintah[1]), float(perintah[2]))
-            print "Translasi berhasil"
-        elif ((perintah[0] == "dilate") and (len(perintah) == 2)):
-            dilate(float(perintah[1]))
-            print "Dilatasi berhasil"
-        elif ((perintah[0] == "rotate") and (len(perintah) == 4)):
-            rotate(float(perintah[1]), float(perintah[2]), float(perintah[3]))
-            print "Rotasi berhasil"
-        elif ((perintah[0] == "reflect") and (len(perintah) == 3)):
-            reflect(float(perintah[1]), float(perintah[2]))
-            print "Refleksi berhasil"
-        elif ((perintah[0] == "shear") and (len(perintah) == 3)):
-            shear(perintah[1], float(perintah[2]))
-            print "Shear berhasil"
-        elif ((perintah[0] == "stretch") and (len(perintah) == 3)):
-            stretch(perintah[1], float(perintah[2]))
-            print "Stretch berhasil"
-        elif ((perintah[0] == "custom") and (len(perintah) == 5)):
-            custom(float(perintah[1]), float(perintah[2]), float(perintah[3]), float(perintah[4]))
-            print "Custom transformation berhasil"
-        elif (perintah[0] == "reset"):
-            reset()
-            print "Reset berhasil"
-        masukan = raw_input("Masukan perintah: ")
-        perintah = masukan.split(" ")
-    glutHideWindow()
-
-take()
-thread.start_new_thread(gl(), ())
-sys.exit
