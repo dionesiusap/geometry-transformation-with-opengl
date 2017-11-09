@@ -4,7 +4,7 @@ Performs and simulates 2 dimensional transformation with OpenGL on Python.
 ## Getting Started
 In terminal type in the following command:
 ```
-python geometry-transform.py
+python main.py
 ```
 The program will show you:
 ```
