@@ -1,4 +1,4 @@
-# Geometry Transformation with OpenGL
+# Geometry Transformation using OpenGL
 Performs and simulates 2 dimensional transformation with OpenGL on Python.
 
 ## Getting Started
