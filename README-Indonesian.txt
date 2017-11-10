@@ -1,5 +1,5 @@
 # Transformasi Geometri Menggunakan API OpenGL
-Menampilkan sumulasi transformasi linear 2 dimensi dengan API OpenGL dengan bahasa Python.
+Menampilkan simulasi transformasi linear 2 dimensi dengan API OpenGL dengan bahasa Python.
 
 ## Memulai
 Pada terminal ketik perintah berikut:
@@ -100,3 +100,7 @@ Masukkan perintah: reset
 Reset berhasil
 
 ```
+
+---
+github.com/dionesiusap/geometry-transformation-with-opengl
+---
